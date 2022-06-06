@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "220339496499",
+    "firebase_url": "https://vincetechnosoft-default-rtdb.firebaseio.com",
+    "project_id": "vincetechnosoft",
+    "storage_bucket": "vincetechnosoft.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:220339496499:android:9b12d5428d35e2be15e546",
+        "android_client_info": {
+          "package_name": "com.vincetechnosoft.distributor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "220339496499-76fisl1atle2snopi4h44n25puupe3gf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1B_pY17XxVejmPHN5ymH7UhZxzrjAGkk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "220339496499-76fisl1atle2snopi4h44n25puupe3gf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
