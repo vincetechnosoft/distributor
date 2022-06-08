@@ -2,14 +2,17 @@ import 'package:bmi_b2b_package/bmi_b2b_package.dart';
 
 import 'package:flutter/material.dart';
 
-class CreateWorker extends StatefulWidget {
-  const CreateWorker({Key? key}) : super(key: key);
+enum UserType { owner, worker, buyer, seller }
+
+class CreateUser extends StatefulWidget {
+  const CreateUser({Key? key, required this.userType}) : super(key: key);
+  final UserType userType;
 
   @override
-  State<CreateWorker> createState() => _CreateWorkerState();
+  State<CreateUser> createState() => _CreateUserState();
 }
 
-class _CreateWorkerState extends State<CreateWorker> {
+class _CreateUserState extends State<CreateUser> {
   var loading = false;
   final namesUsed = <String>{};
   final phoneUsed = <String>{};
@@ -19,7 +22,22 @@ class _CreateWorkerState extends State<CreateWorker> {
 
   @override
   Widget build(BuildContext context) {
-    final workers = DocProvider.of<CompneyDoc>(context).workers;
+    final doc = DocProvider.of<CompneyDoc>(context);
+    final Iterable<UserInfo> users;
+    switch (widget.userType) {
+      case UserType.owner:
+        users = doc.owners;
+        break;
+      case UserType.worker:
+        users = doc.workers;
+        break;
+      case UserType.buyer:
+        users = doc.buyers;
+        break;
+      case UserType.seller:
+        users = doc.seller;
+        break;
+    }
     if (loading) {
       return AlertDialog(
         title:
@@ -37,9 +55,9 @@ class _CreateWorkerState extends State<CreateWorker> {
         ),
       );
     }
-    for (var worker in workers) {
-      namesUsed.add(worker.name);
-      phoneUsed.add(worker.phoneNumber);
+    for (var user in users) {
+      namesUsed.add(user.name);
+      phoneUsed.add(user.phoneNumber);
     }
     return AlertDialog(
       title: const Text("Add Worker"),
@@ -88,6 +106,19 @@ class _CreateWorkerState extends State<CreateWorker> {
   }
 
   void applyChanges() async {
+    var nameStr = name.text;
+    if (nameStr.isEmpty) {
+      return setState(() {
+        loading = false;
+        error = "* Give a Name to remember by";
+      });
+    }
+    if (namesUsed.contains(nameStr)) {
+      return setState(() {
+        loading = false;
+        error = "* Name is Already in Use";
+      });
+    }
     var phoneStr = phoneNumber.text;
     if (phoneStr.startsWith("+91")) {
       phoneStr = phoneStr.substring(3);
@@ -96,7 +127,6 @@ class _CreateWorkerState extends State<CreateWorker> {
     if (!phoneStr.startsWith("+91")) {
       phoneStr = "+91$phoneStr";
     }
-    var nameStr = name.text;
     if (phoneStr.length < 13) {
       return setState(() {
         loading = false;
@@ -109,39 +139,74 @@ class _CreateWorkerState extends State<CreateWorker> {
         error = "* PhoneNumber must have atMost 11 digit long";
       });
     }
-    if (nameStr.isEmpty) {
-      return setState(() {
-        loading = false;
-        error = "* Give a Name to remember by";
-      });
-    }
     if (phoneUsed.contains(phoneStr)) {
       return setState(() {
         loading = false;
         error = "* Phone Number is Already in Use";
       });
     }
-    if (namesUsed.contains(nameStr)) {
-      return setState(() {
-        loading = false;
-        error = "* Name is Already in Use";
-      });
-    }
+
     setState(() {
       loading = true;
       error = null;
     });
-    final res =
-        await WorkerInfo(name: nameStr, phoneNumber: phoneStr).makeChanges();
-    if (mounted) {
-      if (res == null) {
-        Navigator.pop(context);
-      } else {
-        setState(() {
-          loading = false;
-          error = "* Something went wrong \n ${res.error}";
-        });
-      }
+    switch (widget.userType) {
+      case UserType.owner:
+        final res =
+            await OwnerInfo(name: nameStr, phoneNumber: phoneStr).makeChanges();
+        if (mounted) {
+          if (res == null) {
+            Navigator.pop(context);
+          } else {
+            setState(() {
+              loading = false;
+              error = "* Something went wrong \n ${res.error}";
+            });
+          }
+        }
+        break;
+      case UserType.worker:
+        final res = await WorkerInfo(name: nameStr, phoneNumber: phoneStr)
+            .makeChanges();
+        if (mounted) {
+          if (res == null) {
+            Navigator.pop(context);
+          } else {
+            setState(() {
+              loading = false;
+              error = "* Something went wrong \n ${res.error}";
+            });
+          }
+        }
+        break;
+      case UserType.buyer:
+        final res =
+            await BuyerInfo(name: nameStr, phoneNumber: phoneStr).makeChanges();
+        if (mounted) {
+          if (res == null) {
+            Navigator.pop(context);
+          } else {
+            setState(() {
+              loading = false;
+              error = "* Something went wrong \n ${res.error}";
+            });
+          }
+        }
+        break;
+      case UserType.seller:
+        final res = await SellerInfo(name: nameStr, phoneNumber: phoneStr)
+            .makeChanges();
+        if (mounted) {
+          if (res == null) {
+            Navigator.pop(context);
+          } else {
+            setState(() {
+              loading = false;
+              error = "* Something went wrong \n ${res.error}";
+            });
+          }
+        }
+        break;
     }
   }
 }

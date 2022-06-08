@@ -46,9 +46,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BmiApp<MyAuthUser, MainRoute>(
-      title: "B2B-BMI",
+      title: "DISTRIBUTOR's App",
       appInfoProvider: AppInfoProvider(
-        listenNode: "b2b-main",
+        listenNode: "distributor",
         appVersion: currentAppVersion,
         apkDir: Directory("${dir.path}/apk"),
       ),

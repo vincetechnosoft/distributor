@@ -71,7 +71,7 @@ class EntryFilter {
   DateTimeRange? _dateTimeRange;
   EntryType? _entryType;
   String? _buyer;
-  int? _seller;
+  String? _seller;
   String? _creator;
 
   var _aDayOfMonth = DateTimeString.fromDateTime(DateTime.now());
@@ -124,9 +124,9 @@ class EntryFilter {
       if (seller != null) {
         res = res.where((entry) {
           if (entry is BoughtEntry) {
-            if (entry.sellerID == seller) return true;
+            if (entry.sellerNumber == seller) return true;
           } else if (entry is BuyInPaymentEntry) {
-            if (entry.sellerID == seller) return true;
+            if (entry.sellerNumber == seller) return true;
           }
           return false;
         });
@@ -209,10 +209,14 @@ class _WidgitState extends State<_Widgit> {
             value: widget.filter._creator,
             items: [
               const DropdownMenuItem(child: Text("All")),
-              DropdownMenuItem(
-                value: compneyDoc.owner.phoneNumber,
-                enabled: compneyDoc.owner.userStatus != UserStatus.error,
-                child: Text(compneyDoc.owner.name),
+              ...compneyDoc.owners.map(
+                (e) => DropdownMenuItem(
+                  value: e.phoneNumber,
+                  child: Text(
+                    e.name,
+                    style: const TextStyle(color: Colors.redAccent),
+                  ),
+                ),
               ),
               ...compneyDoc.workers.map(
                 (e) => DropdownMenuItem(
@@ -250,13 +254,13 @@ class _WidgitState extends State<_Widgit> {
         ),
         ListTile(
           title: const Text("Seller"),
-          trailing: DropdownButton<int?>(
+          trailing: DropdownButton<String?>(
             value: widget.filter._seller,
             items: [
               const DropdownMenuItem(child: Text("All")),
               ...compneyDoc.seller.map(
                 (e) => DropdownMenuItem(
-                  value: e.id,
+                  value: e.phoneNumber,
                   child: Text(e.name),
                 ),
               )

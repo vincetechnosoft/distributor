@@ -1,4 +1,5 @@
 import 'package:distributor/auth/auth.dart';
+import 'package:distributor/home/widgets/create_user.dart';
 import 'package:distributor/providers/location.dart';
 import 'package:bmi_b2b_package/bmi_b2b_package.dart';
 import 'package:distributor/home/widgets/editable_tile.dart';
@@ -21,7 +22,6 @@ class HomePage extends StatelessWidget {
     final compneyInfo = DocProvider.of<ConfigDoc>(context)
         .getCompney(LocationProvider.inUse?.compneyID)!;
     final hasPermission = user.isDev;
-    final owner = compneyDoc.owner;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Home Page"),
@@ -87,6 +87,7 @@ class HomePage extends StatelessWidget {
                           "Are you sure",
                           "Once deleted, can't be undone!",
                         )) {
+                          context.read<LocationProvider>().reset();
                           final res = await compneyInfo.deleteData();
                           res?.showAlertDialog(context: context);
                         }
@@ -150,25 +151,20 @@ class HomePage extends StatelessWidget {
               disableEditing: !user.hasOwnerPermission,
             ),
             const Divider(),
-            const HeaderTile(title: "Owner Info"),
-            EditableTile(
-              lable: "Name",
-              keybordType: TextInputType.name,
-              onApplyChanges: (newVal) {
-                return owner.makeChanges(newName: newVal);
+            const HeaderTile(title: "Connected Accounts"),
+            ListTile(
+              title: const Text("Owners"),
+              subtitle: Text("${compneyDoc.owners.length} active users"),
+              onTap: () {
+                UserInfoRoute.goTo(context, UserType.owner);
               },
-              value: owner.name,
-              disableEditing: !hasPermission,
             ),
-            EditableTile(
-              lable: "PhoneNumber",
-              keybordType: TextInputType.phone,
-              onApplyChanges: (newVal) {
-                return owner.makeChanges(newPhoneNumber: newVal);
+            ListTile(
+              title: const Text("Worker"),
+              subtitle: Text("${compneyDoc.workers.length} active users"),
+              onTap: () {
+                UserInfoRoute.goTo(context, UserType.worker);
               },
-              value: owner.phoneNumber,
-              disableEditing: !hasPermission,
-              status: owner.userStatus.toNullBool(),
             ),
             const Divider(),
             const HeaderTile(title: "Products"),
@@ -181,24 +177,17 @@ class HomePage extends StatelessWidget {
             const Divider(),
             const HeaderTile(title: "Other Accounts"),
             ListTile(
-              title: const Text("Worker"),
-              subtitle: Text("${compneyDoc.workers.length} active users"),
-              onTap: () {
-                SecondaryRoute.goTo(context, SecondaryPage.workerInfo);
-              },
-            ),
-            ListTile(
               title: const Text("Buyers"),
               subtitle: Text("${compneyDoc.buyers.length} active users"),
               onTap: () {
-                SecondaryRoute.goTo(context, SecondaryPage.buyersUserInfo);
+                UserInfoRoute.goTo(context, UserType.buyer);
               },
             ),
             ListTile(
               title: const Text("Sellers"),
               subtitle: Text("${compneyDoc.seller.length} active accounts"),
               onTap: () {
-                SecondaryRoute.goTo(context, SecondaryPage.sellerAccInfo);
+                UserInfoRoute.goTo(context, UserType.seller);
               },
             ),
           ],

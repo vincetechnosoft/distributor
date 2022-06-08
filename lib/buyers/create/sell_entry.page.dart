@@ -1,9 +1,7 @@
-import 'package:distributor/auth/auth.dart';
 import 'package:distributor/utils/utils.dart';
 import 'package:bmi_b2b_package/bmi_b2b_package.dart';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class _ItemSold extends InventoryProductController {
   final IntMoney rate;
@@ -29,12 +27,10 @@ class _SellProductState extends State<SellProduct> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<MyAuthUser>(context);
     final compneyDoc = DocProvider.of<CompneyDoc>(context);
     final productDoc = DocProvider.of<ProductDoc>(context);
     final items = productDoc.items;
     final buyer = compneyDoc.getBuyer(widget.buyerNumber);
-    final hasOwnerPermission = user.hasOwnerPermission;
     return Scaffold(
       appBar: AppBar(title: Text("Selling To ${buyer.name}")),
       body: Padding(
@@ -45,32 +41,7 @@ class _SellProductState extends State<SellProduct> {
             if (loading && index-- == 0) return const LinearProgressIndicator();
             final item = items.elementAt(index);
             final controller = itemsSold[item.id] ??= _ItemSold(item, buyer);
-            return ListTile(
-              title: InputQuntity(controller, loading: loading),
-              subtitle: hasOwnerPermission
-                  ? Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text("Rate"),
-                              Text(controller.rate.toString()),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text("Discount Applyed"),
-                              Text(controller.discount.toString()),
-                            ],
-                          ),
-                        ],
-                      ),
-                    )
-                  : null,
-            );
+            return ListTile(title: InputQuntity(controller, loading: loading));
           },
         ),
       ),

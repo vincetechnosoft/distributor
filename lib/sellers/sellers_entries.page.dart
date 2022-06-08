@@ -17,11 +17,11 @@ class SellersEntriesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sellerID = sellerInfo.id;
+    final sellerNumber = sellerInfo.phoneNumber;
     final user = Provider.of<MyAuthUser>(context);
     final stateDoc = DocProvider.of<StateDoc>(context);
-    final entries = stateDoc.getSellerEntries(sellerID);
-    final due = stateDoc.getBuyInDuePayment(sellerID);
+    final entries = stateDoc.getSellerEntries(sellerNumber);
+    final due = stateDoc.getBuyInDuePayment(sellerNumber);
     final hasWorkerPermission = user.hasWorkerPermission;
     return Scaffold(
       appBar: AppBar(
@@ -56,7 +56,7 @@ class SellersEntriesPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) {
-                    return BuyProduct(sellerID: sellerID);
+                    return BuyProduct(sellerNumber: sellerNumber);
                   }),
                 );
               }

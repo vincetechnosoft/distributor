@@ -31,6 +31,10 @@ class FinalGateWay extends StatelessWidget {
         compneyDocProvider.doc == null ||
         productDocProvider.doc == null ||
         stateDocProvider.doc == null) {
+      if (locationProvider.compneyID == null) {
+        if (user.isDev) return const SelectCompneyPage(fromGateWay: true);
+        return const ProfilePage(fromGateWay: true);
+      }
       if (configDocProvider.loading ||
           compneyDocProvider.loading ||
           productDocProvider.loading ||
@@ -43,10 +47,7 @@ class FinalGateWay extends StatelessWidget {
           body: const Center(child: CircularProgressIndicator()),
         );
       }
-      if (locationProvider.compneyID == null) {
-        if (user.isDev) return const SelectCompneyPage(fromGateWay: true);
-        return const ProfilePage(fromGateWay: true);
-      }
+
       return ErrorPage(
         fromGateWay: true,
         errorObj: compneyDocProvider.error ??

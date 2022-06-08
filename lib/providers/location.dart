@@ -26,11 +26,12 @@ class LocationProvider extends ChangeNotifier {
 
   String? get compneyID => _compneyID;
 
-  void changeCompney(CompneyInfo compneyInfo) {
-    if (compneyInfo.id == _compneyID) return;
+  bool changeCompney(CompneyInfo compneyInfo) {
+    if (compneyInfo.id == _compneyID) return false;
     preferences.setString("compneyID", compneyInfo.id);
     _compneyID = compneyInfo.id;
     notifyListeners();
+    return true;
   }
 
   void reset() {

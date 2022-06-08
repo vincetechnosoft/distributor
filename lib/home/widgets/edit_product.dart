@@ -27,10 +27,10 @@ class _ItemPageState extends State<ItemPage> {
   final rankOrderValue = TextEditingController();
   final defaultDiscount = TextEditingController();
   final customerDiscount = <String, TextEditingController>{};
-  final sellerRate = <int, TextEditingController>{};
+  final sellerRate = <String, TextEditingController>{};
   final defaultBoughtRate = TextEditingController();
   final customerName = <String, String>{};
-  final sellerName = <int, String>{};
+  final sellerName = <String, String>{};
 
   int? get productID => widget.productID ?? createdID;
 
@@ -52,7 +52,7 @@ class _ItemPageState extends State<ItemPage> {
       customerName[buyer.phoneNumber] = buyer.name;
     }
     for (var seller in sellers) {
-      sellerName[seller.id] = seller.name;
+      sellerName[seller.phoneNumber] = seller.name;
     }
     final product = productDoc.getItem(productID?.toString());
     if (!hasPermission && widget.productID == null) {
@@ -279,7 +279,7 @@ class _ItemPageState extends State<ItemPage> {
                     itemBuilder: (context) {
                       return sellers.map((e) {
                         return PopupMenuItem(
-                          enabled: !sellerRate.containsKey(e.id),
+                          enabled: !sellerRate.containsKey(e.phoneNumber),
                           value: e,
                           child: Text(e.name),
                         );
@@ -287,7 +287,8 @@ class _ItemPageState extends State<ItemPage> {
                     },
                     onSelected: (seller) {
                       setState(() {
-                        sellerRate[seller.id] = TextEditingController();
+                        sellerRate[seller.phoneNumber] =
+                            TextEditingController();
                       });
                     },
                   ),

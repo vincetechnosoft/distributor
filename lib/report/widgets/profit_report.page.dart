@@ -62,7 +62,7 @@ class _ProfitReportPageState extends State<ProfitReportPage> {
             rowBuilder: (entry) {
               if (entry is BoughtEntry) {
                 final a = entry.buyIn.amount;
-                final name = getSeller(entry.sellerID).name;
+                final name = getSeller(entry.sellerNumber).name;
                 return DisplayRow.str(
                   fixedCell:
                       "@${name.length > 10 ? "${name.substring(0, 9)}. " : name} -Bought",

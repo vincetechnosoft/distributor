@@ -1,20 +1,19 @@
-import 'package:distributor/auth/auth.dart';
 import 'package:bmi_b2b_package/bmi_b2b_package.dart';
 import 'package:distributor/utils/controller.dart';
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class _ItemBought extends InventoryProductController {
   final IntMoney rate;
   _ItemBought(Product product, SellerInfo seller)
-      : rate = product.sellerRate[seller.id] ?? product.defaultBoughtRate,
+      : rate =
+            product.sellerRate[seller.phoneNumber] ?? product.defaultBoughtRate,
         super(product);
 }
 
 class BuyProduct extends StatefulWidget {
-  const BuyProduct({Key? key, required this.sellerID}) : super(key: key);
-  final int sellerID;
+  const BuyProduct({Key? key, required this.sellerNumber}) : super(key: key);
+  final String sellerNumber;
 
   @override
   State<BuyProduct> createState() => _BuyProductState();
@@ -26,12 +25,10 @@ class _BuyProductState extends State<BuyProduct> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<MyAuthUser>(context);
     final compneyDoc = DocProvider.of<CompneyDoc>(context);
     final productDoc = DocProvider.of<ProductDoc>(context);
     final items = productDoc.items;
-    final seller = compneyDoc.getSeller(widget.sellerID);
-    final hasOwnerPermission = user.hasOwnerPermission;
+    final seller = compneyDoc.getSeller(widget.sellerNumber);
     return Scaffold(
       appBar: AppBar(title: Text("Buying from ${seller.name}")),
       body: Padding(
@@ -43,25 +40,7 @@ class _BuyProductState extends State<BuyProduct> {
             final item = items.elementAt(index);
             final controller =
                 itemsBought[item.id] ??= _ItemBought(item, seller);
-            return ListTile(
-              title: InputQuntity(controller, loading: loading),
-              subtitle: hasOwnerPermission
-                  ? Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text("Rate"),
-                              Text(controller.rate.toString()),
-                            ],
-                          ),
-                        ],
-                      ),
-                    )
-                  : null,
-            );
+            return ListTile(title: InputQuntity(controller, loading: loading));
           },
         ),
       ),
@@ -85,7 +64,7 @@ class _BuyProductState extends State<BuyProduct> {
           rate: e.value.rate,
         ),
       ),
-      sellerID: widget.sellerID,
+      sellerNumber: widget.sellerNumber,
     );
     final res = await bE.addEntryToDoc(context);
     if (mounted) {

@@ -1,6 +1,7 @@
 import 'package:distributor/auth/auth.dart';
 import 'package:bmi_b2b_package/bmi_b2b_package.dart';
 import 'package:distributor/home/widgets/edit_product.dart';
+import 'package:distributor/layout/permission_req.page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -47,14 +48,13 @@ class ProductInfoPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                onTap: hasPermission
-                    ? () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return ItemPage(productID: product.id);
-                        }));
-                      }
-                    : null,
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return hasPermission
+                        ? ItemPage(productID: product.id)
+                        : PremissionRequiredPage(title: product.name);
+                  }));
+                },
               );
             }),
       ),

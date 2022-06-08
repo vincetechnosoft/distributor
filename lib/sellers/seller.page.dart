@@ -1,6 +1,6 @@
 import 'package:distributor/auth/auth.dart';
 import 'package:bmi_b2b_package/bmi_b2b_package.dart';
-import 'package:distributor/home/widgets/create_seller.dart';
+import 'package:distributor/home/widgets/create_user.dart';
 import 'package:distributor/layout/drawer.dart';
 import 'package:distributor/layout/routes.dart';
 import 'package:distributor/sellers/create/buy_entry.page.dart';
@@ -41,7 +41,7 @@ class SellerPage extends StatelessWidget {
                 showDialog(
                   context: context,
                   builder: (context) {
-                    return const CreateSeller();
+                    return const CreateUser(userType: UserType.seller);
                   },
                 );
               }
@@ -54,9 +54,10 @@ class SellerPage extends StatelessWidget {
           final seller = sellers.elementAt(index);
           return ListTile(
             title: Text(seller.name),
-            trailing: Text(stateDoc.getBuyInDuePayment(seller.id).toString()),
+            trailing: Text(
+                stateDoc.getBuyInDuePayment(seller.phoneNumber).toString()),
             subtitle: Text(
-              "${stateDoc.getSellerEntries(seller.id).length} related Entries avalable",
+              "${stateDoc.getSellerEntries(seller.phoneNumber).length} related Entries avalable",
             ),
             onTap: () {
               if (hasOwnerPermission) {
@@ -65,7 +66,7 @@ class SellerPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) {
-                    return BuyProduct(sellerID: seller.id);
+                    return BuyProduct(sellerNumber: seller.phoneNumber);
                   }),
                 );
               }

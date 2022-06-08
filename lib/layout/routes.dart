@@ -2,6 +2,7 @@ import 'package:distributor/auth/auth.dart';
 import 'package:distributor/buyers/buyers.dart';
 import 'package:bmi_b2b_package/bmi_b2b_package.dart';
 import 'package:distributor/entries/entry.page.dart';
+import 'package:distributor/home/widgets/create_user.dart';
 import 'package:distributor/inventory/inventory.dart';
 import 'package:distributor/layout/permission_req.page.dart';
 import 'package:distributor/report/report.dart';
@@ -66,7 +67,7 @@ class MainRoute extends _Route {
       route: "/seller",
       name: "Sellers",
       page: const SellerPage(),
-      ownerOnly: true,
+      ownerOnly: false,
     ),
     MainPage.buyers: MainRoute._(
       icon: Icons.store_mall_directory_outlined,
@@ -127,9 +128,6 @@ class MainRoute extends _Route {
 
 enum SecondaryPage {
   //! home page
-  workerInfo, // ✅
-  buyersUserInfo, // ✅
-  sellerAccInfo, // ✅
   products, // ✅
   //! inventory page
   inventoryWastage, // ✅
@@ -144,24 +142,6 @@ class SecondaryRoute extends _Route {
       name: "Select Compney",
       page: const SelectCompneyPage(fromGateWay: false),
       ownerOnly: true,
-    ),
-    SecondaryPage.workerInfo: SecondaryRoute._(
-      route: "/home/workerInfo",
-      name: "Compney User Info",
-      page: const CompneyUserInfoPage(),
-      ownerOnly: false,
-    ),
-    SecondaryPage.sellerAccInfo: SecondaryRoute._(
-      route: "/home/sellerAccInfo",
-      name: "Seller Info",
-      page: const SellerInfoPage(),
-      ownerOnly: false,
-    ),
-    SecondaryPage.buyersUserInfo: SecondaryRoute._(
-      route: "/home/buyersUserInfo",
-      name: "Buyer Info",
-      page: const BuyerInfoPage(),
-      ownerOnly: false,
     ),
     SecondaryPage.products: SecondaryRoute._(
       route: "/home/product",
@@ -195,6 +175,27 @@ class SecondaryRoute extends _Route {
   final isMainPage = false;
 }
 
+class UserInfoRoute extends AppRoute<UserType> {
+  static final instance = UserInfoRoute._();
+  static void goTo(BuildContext context, UserType entry) {
+    instance.navigate(context, argument: entry);
+  }
+
+  UserInfoRoute._() : super("/home/userInfo");
+
+  @override
+  Widget? builder({argument}) {
+    if (MyAuthUser.inUse?.hasOwnerPermission != true) {
+      return const PremissionRequiredPage(title: "Entry Page");
+    }
+    if (argument == null) return null;
+    return CompneyUserInfoPage(userType: argument);
+  }
+
+  @override
+  final isMainPage = false;
+}
+
 class EntryRoute extends AppRoute<Entry> {
   static final instance = EntryRoute._();
   static void goTo(BuildContext context, Entry entry) {
@@ -204,7 +205,7 @@ class EntryRoute extends AppRoute<Entry> {
   EntryRoute._() : super("/entry/");
 
   @override
-  Widget? builder({Entry? argument}) {
+  Widget? builder({argument}) {
     if (MyAuthUser.inUse?.hasOwnerPermission != true) {
       return const PremissionRequiredPage(title: "Entry Page");
     }
@@ -228,7 +229,7 @@ class SellerRoute extends AppRoute<SellerInfo> {
   final isMainPage = false;
 
   @override
-  Widget? builder({SellerInfo? argument}) {
+  Widget? builder({argument}) {
     if (MyAuthUser.inUse?.hasOwnerPermission != true) {
       return const PremissionRequiredPage(title: "Sellere's Entries");
     }
@@ -248,7 +249,7 @@ class BuyerRoute extends AppRoute<BuyerInfo> {
   @override
   final isMainPage = false;
   @override
-  Widget? builder({BuyerInfo? argument}) {
+  Widget? builder({argument}) {
     if (MyAuthUser.inUse?.hasOwnerPermission != true) {
       return const PremissionRequiredPage(title: "Buyer's Entries");
     }

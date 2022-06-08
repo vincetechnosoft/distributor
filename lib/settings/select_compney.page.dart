@@ -1,6 +1,7 @@
 import 'package:distributor/auth/auth.dart';
 
 import 'package:bmi_b2b_package/bmi_b2b_package.dart';
+import 'package:distributor/layout/routes.dart';
 import 'package:distributor/providers/location.dart';
 
 import 'package:flutter/material.dart';
@@ -14,16 +15,16 @@ class SelectCompneyPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final locationProvider = Provider.of<LocationProvider>(context);
     final configDocProvider = Provider.of<DocProvider<ConfigDoc>>(context);
-    final b2b = configDocProvider.doc?.b2b;
+    final b2b = configDocProvider.doc?.distributor;
     if (b2b == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text("Select B2B Compney")),
+        appBar: AppBar(title: const Text("Select a DISTRIBUTOR")),
         body: const Center(child: Text("No Data found !")),
       );
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Select B2B Compney"),
+        title: const Text("Select a DISTRIBUTOR"),
         actions: [if (fromGateWay) SettingsWidgit.signOut<MyAuthUser>()],
       ),
       body: ListView.separated(
@@ -37,7 +38,11 @@ class SelectCompneyPage extends StatelessWidget {
             title: Text(compney.name),
             subtitle: Text(compney.id),
             onTap: () {
-              locationProvider.changeCompney(compney);
+              if (locationProvider.changeCompney(compney) && !fromGateWay) {
+                Navigator.pop(context);
+                Navigator.popAndPushNamed(
+                    context, MainRoute.defaultRoute.route);
+              }
             },
           );
         },

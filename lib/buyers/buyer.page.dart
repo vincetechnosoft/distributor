@@ -1,7 +1,7 @@
 import 'package:distributor/auth/auth.dart';
 import 'package:distributor/buyers/create/sell_entry.page.dart';
 import 'package:bmi_b2b_package/bmi_b2b_package.dart';
-import 'package:distributor/home/widgets/create_buyer.dart';
+import 'package:distributor/home/widgets/create_user.dart';
 import 'package:distributor/layout/drawer.dart';
 import 'package:distributor/layout/routes.dart';
 
@@ -41,7 +41,7 @@ class BuyerPage extends StatelessWidget {
                 showDialog(
                   context: context,
                   builder: (context) {
-                    return const CreateBuyer();
+                    return const CreateUser(userType: UserType.buyer);
                   },
                 );
               }

@@ -52,7 +52,7 @@ class _PurchaseReportPageState extends State<PurchaseReportPage> {
             ),
             DisplayTable(
               fixColumn: "Product Name",
-              column: data.sellerIDsUsed.map((e) => getSeller(e).name),
+              column: data.sellerNumbersUsed.map((e) => getSeller(e).name),
               values: data.productIDsUsed,
               rowBuilder: (productID) {
                 final data1 = data.data[productID];
@@ -60,9 +60,9 @@ class _PurchaseReportPageState extends State<PurchaseReportPage> {
                 final name = product?.name ?? "ID: $productID";
                 return DisplayRow(
                   fixedCell: name,
-                  cells: data.sellerIDsUsed.map(
-                    (sellerID) {
-                      final data2 = data1?[sellerID];
+                  cells: data.sellerNumbersUsed.map(
+                    (sellerNumber) {
+                      final data2 = data1?[sellerNumber];
                       return DisplayCell(
                         data2 == null
                             ? "-"
@@ -77,7 +77,7 @@ class _PurchaseReportPageState extends State<PurchaseReportPage> {
                               return AlertDialog(
                                 title: AlternateText([
                                   "$name  ",
-                                  "@${getSeller(sellerID).name}"
+                                  "@${getSeller(sellerNumber).name}"
                                 ]),
                                 content: DisplayTable<MapEntry<int, _Bought>>(
                                   fixColumn: "Rate",
@@ -116,7 +116,7 @@ class _PurchaseReportPageState extends State<PurchaseReportPage> {
             const HeaderTile(title: "Inventory Changes ( + )"),
             DisplayTable(
               fixColumn: "Product Name",
-              column: data.sellerIDsUsed.map((e) => getSeller(e).name),
+              column: data.sellerNumbersUsed.map((e) => getSeller(e).name),
               values: data.productIDsUsed,
               rowBuilder: (productID) {
                 final product = getProduct("$productID");
@@ -124,7 +124,7 @@ class _PurchaseReportPageState extends State<PurchaseReportPage> {
                 final name = product?.name ?? "ID: $productID";
                 return DisplayRow.str(
                   fixedCell: name,
-                  cells: data.sellerIDsUsed.map(
+                  cells: data.sellerNumbersUsed.map(
                     (buyerNumber) {
                       final data2 = data1?[buyerNumber];
                       final initQun = data2?.initQun;
@@ -177,24 +177,24 @@ class _NetBought {
 }
 
 class _Summery {
-  /// ! productID => sellerID => netBought;
-  final Map<int, Map<int, _NetBought>> data = {};
+  /// ! productID => sellerNumber => netBought;
+  final Map<int, Map<String, _NetBought>> data = {};
   late final List<int> productIDsUsed;
-  late final List<int> sellerIDsUsed;
+  late final List<String> sellerNumbersUsed;
 
   _Summery.from(Iterable<Entry> entries) {
     final productIDs = <int>{};
-    final sellerIDs = <int>{};
+    final sellerNumbers = <String>{};
     for (var entry in entries) {
       if (entry is! BoughtEntry) continue;
-      sellerIDs.add(entry.sellerID);
+      sellerNumbers.add(entry.sellerNumber);
       for (var item in entry.itemBought) {
         productIDs.add(item.id);
-        ((data[item.id] ??= {})[entry.sellerID] ??= _NetBought(item.id))
+        ((data[item.id] ??= {})[entry.sellerNumber] ??= _NetBought(item.id))
             .add(item);
       }
     }
     productIDsUsed = productIDs.toList()..sort();
-    sellerIDsUsed = sellerIDs.toList()..sort();
+    sellerNumbersUsed = sellerNumbers.toList()..sort();
   }
 }

@@ -34,12 +34,13 @@ class InitGateWay extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
             create: (_) => DocProvider(
-                parse: ConfigDoc.fromJson, initialPath: "CONFIG/B2B")),
+                parse: ConfigDoc.fromJson, initialPath: "CONFIG/DISTRIBUTOR")),
         ChangeNotifierProxyProvider(
             create: LocationProvider.init, update: LocationProvider.update),
-        _provideDoc(CompneyDoc.fromJson, (id) => "B2B/$id"),
-        _provideDoc(ProductDoc.fromJson, (id) => "B2B/$id/DATA/PRODUCTS"),
-        _provideDoc(StateDoc.fromJson, (id) => "B2B/$id/DATA/STATE"),
+        _provideDoc(CompneyDoc.fromJson, (id) => "DISTRIBUTOR/$id"),
+        _provideDoc(
+            ProductDoc.fromJson, (id) => "DISTRIBUTOR/$id/DATA/PRODUCTS"),
+        _provideDoc(StateDoc.fromJson, (id) => "DISTRIBUTOR/$id/DATA/STATE"),
       ],
       child: child,
     );

@@ -63,7 +63,7 @@ class _CreateSellerPaymentEntryState extends State<CreateSellerPaymentEntry> {
       loading = true;
     });
     final res = await BuyInPaymentEntry(
-      sellerID: widget.seller.id,
+      sellerNumber: widget.seller.phoneNumber,
       amount: controllerToInt(amount),
     ).addEntryToDoc(context);
     if (mounted) {
