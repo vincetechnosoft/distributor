@@ -48,13 +48,15 @@ class _ItemPageState extends State<ItemPage> {
     final compneyDoc = DocProvider.of<CompneyDoc>(context);
     final buyers = compneyDoc.buyers;
     final sellers = compneyDoc.seller;
-    for (var buyer in buyers) {
+    for (var buyer in buyers.users) {
       customerName[buyer.phoneNumber] = buyer.name;
     }
-    for (var seller in sellers) {
+    for (var seller in sellers.users) {
       sellerName[seller.phoneNumber] = seller.name;
     }
-    final product = productDoc.getItem(productID?.toString());
+    final id = productID;
+    final product =
+        id == null ? null : productDoc.getItem(productID.toString());
     if (!hasPermission && widget.productID == null) {
       return const ErrorPage(
         fromGateWay: false,
@@ -64,7 +66,7 @@ class _ItemPageState extends State<ItemPage> {
     }
     if (loading || (created && product == null)) return loadingUI();
     if (product == null || editMode) {
-      return editItemUI(buyers, sellers, productDoc);
+      return editItemUI(buyers, sellers, productDoc, product);
     }
     return noramlUI(hasPermission, product);
   }
@@ -219,12 +221,8 @@ class _ItemPageState extends State<ItemPage> {
     );
   }
 
-  Scaffold editItemUI(
-    Iterable<BuyerInfo> buyers,
-    Iterable<SellerInfo> sellers,
-    ProductDoc productDoc,
-  ) {
-    final item = productDoc.getItem(productID?.toString());
+  Scaffold editItemUI(UsersInfo<BuyerInfo> buyers,
+      UsersInfo<SellerInfo> sellers, ProductDoc productDoc, Product? item) {
     return Scaffold(
       appBar: AppBar(
         title: title,
@@ -272,12 +270,12 @@ class _ItemPageState extends State<ItemPage> {
           const Divider(),
           HeaderTile(
             title: "Seller Info",
-            trailing: sellers.isEmpty
+            trailing: sellers.users.isEmpty
                 ? null
                 : PopupMenuButton<SellerInfo>(
                     child: const Icon(Icons.add),
                     itemBuilder: (context) {
-                      return sellers.map((e) {
+                      return sellers.users.map((e) {
                         return PopupMenuItem(
                           enabled: !sellerRate.containsKey(e.phoneNumber),
                           value: e,
@@ -315,12 +313,12 @@ class _ItemPageState extends State<ItemPage> {
           }),
           HeaderTile(
             title: "Buyer Info",
-            trailing: buyers.isEmpty
+            trailing: buyers.users.isEmpty
                 ? null
                 : PopupMenuButton<BuyerInfo>(
                     child: const Icon(Icons.add),
                     itemBuilder: (context) {
-                      return buyers.map((e) {
+                      return buyers.users.map((e) {
                         return PopupMenuItem(
                           enabled: !customerDiscount.containsKey(e.phoneNumber),
                           value: e,

@@ -24,7 +24,7 @@ class _PurchaseReportPageState extends State<PurchaseReportPage> {
   @override
   Widget build(BuildContext context) {
     final getProduct = DocProvider.of<ProductDoc>(context).getItem;
-    final getSeller = DocProvider.of<CompneyDoc>(context).getSeller;
+    final seller = DocProvider.of<CompneyDoc>(context).seller;
     final data = getData(widget.entries);
 
     return Scaffold(
@@ -52,12 +52,12 @@ class _PurchaseReportPageState extends State<PurchaseReportPage> {
             ),
             DisplayTable(
               fixColumn: "Product Name",
-              column: data.sellerNumbersUsed.map((e) => getSeller(e).name),
+              column: data.sellerNumbersUsed.map((e) => seller[e].name),
               values: data.productIDsUsed,
               rowBuilder: (productID) {
                 final data1 = data.data[productID];
                 final product = getProduct("$productID");
-                final name = product?.name ?? "ID: $productID";
+                final name = product.name;
                 return DisplayRow(
                   fixedCell: name,
                   cells: data.sellerNumbersUsed.map(
@@ -77,7 +77,7 @@ class _PurchaseReportPageState extends State<PurchaseReportPage> {
                               return AlertDialog(
                                 title: AlternateText([
                                   "$name  ",
-                                  "@${getSeller(sellerNumber).name}"
+                                  "@${seller[sellerNumber].name}"
                                 ]),
                                 content: DisplayTable<MapEntry<int, _Bought>>(
                                   fixColumn: "Rate",
@@ -116,12 +116,12 @@ class _PurchaseReportPageState extends State<PurchaseReportPage> {
             const HeaderTile(title: "Inventory Changes ( + )"),
             DisplayTable(
               fixColumn: "Product Name",
-              column: data.sellerNumbersUsed.map((e) => getSeller(e).name),
+              column: data.sellerNumbersUsed.map((e) => seller[e].name),
               values: data.productIDsUsed,
               rowBuilder: (productID) {
                 final product = getProduct("$productID");
                 final data1 = data.data[productID];
-                final name = product?.name ?? "ID: $productID";
+                final name = product.name;
                 return DisplayRow.str(
                   fixedCell: name,
                   cells: data.sellerNumbersUsed.map(
@@ -165,7 +165,7 @@ class _NetBought {
   var quntity = 0;
   var pack = 0;
 
-  ItemQun get initQun => ItemQun(id, quntity, pack);
+  ItemQun get initQun => ItemQun(id: id, quntity: quntity, pack: pack);
 
   add(ItemBought itemBought) {
     final a = itemBought.amount;

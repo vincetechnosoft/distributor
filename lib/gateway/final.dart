@@ -1,5 +1,5 @@
 import 'package:distributor/auth/auth.dart';
-import 'package:distributor/gateway/maintenance.dart';
+// import 'package:distributor/gateway/maintenance.dart';
 import 'package:bmi_b2b_package/bmi_b2b_package.dart';
 import 'package:distributor/providers/location.dart';
 import 'package:distributor/settings/select_compney.page.dart';
@@ -17,21 +17,23 @@ class FinalGateWay extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = Provider.of<MyAuthUser>(context);
     final configDocProvider = Provider.of<DocProvider<ConfigDoc>>(context);
-    final maintenance = configDocProvider.doc?.maintenance;
-    if (maintenance != null && maintenance.applyToUs) {
-      return MaintenancePage(maintenance: maintenance);
-    }
+    // final maintenance = configDocProvider.doc?.maintenance;
+    // if (maintenance != null && maintenance.applyToUs) {
+    //   return MaintenancePage(maintenance: maintenance);
+    // }
 
     final compneyDocProvider = Provider.of<DocProvider<CompneyDoc>>(context);
     final productDocProvider = Provider.of<DocProvider<ProductDoc>>(context);
     final stateDocProvider = Provider.of<DocProvider<StateDoc>>(context);
     final locationProvider = Provider.of<LocationProvider>(context);
+    final compneyID = locationProvider.compneyID;
+    final configDoc = configDocProvider.doc;
 
-    if (configDocProvider.doc == null ||
+    if (configDoc == null ||
         compneyDocProvider.doc == null ||
         productDocProvider.doc == null ||
         stateDocProvider.doc == null) {
-      if (locationProvider.compneyID == null) {
+      if (compneyID == null) {
         if (user.isDev) return const SelectCompneyPage(fromGateWay: true);
         return const ProfilePage(fromGateWay: true);
       }
@@ -59,17 +61,14 @@ class FinalGateWay extends StatelessWidget {
         reset: locationProvider.reset,
       );
     }
-    if (compneyDocProvider.doc?.action.disabled == true && !user.isDev) {
-      return ErrorPage(
+    if (compneyID == null) {
+      return const ErrorPage(
+        errorObj: "Something went wrong",
+        title: "No Compney Selected",
         fromGateWay: true,
-        title: "Compney is disabled",
-        errorObj:
-            "This compney is automatecly disabled, Contact to software provider",
-        drawer: false,
-        reset: locationProvider.reset,
       );
     }
-
-    return child;
+    final compneyInfo = configDoc.distributor[compneyID];
+    return Provider(create: (_) => compneyInfo, child: child);
   }
 }

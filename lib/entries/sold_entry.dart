@@ -13,7 +13,7 @@ List<Widget> buildSoldEntry({
     ListTile(
       title: const Text("Buyer"),
       trailing: Text(
-        compneyDoc?.getBuyer(entry.buyerNumber).name ?? entry.buyerNumber,
+        compneyDoc?.buyers[entry.buyerNumber].name ?? entry.buyerNumber,
       ),
     ),
     const Divider(height: 30),
@@ -24,8 +24,8 @@ List<Widget> buildSoldEntry({
       values: entry.itemSold,
       rowBuilder: (e) {
         return DisplayRow.str(
-          fixedCell: productDoc?.getItem(e.id.toString())?.name ??
-              "ProductID: ${e.id}",
+          fixedCell:
+              productDoc?.getItem(e.id.toString()).name ?? "ProductID: ${e.id}",
           cells: [
             '${e.rate.toString(trail: false)} ( -${e.discountApplyed.toString(trail: false, lead: false)} )',
             e.toString(),
@@ -55,8 +55,7 @@ class SoldEntryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final buyer =
-        DocProvider.of<CompneyDoc>(context).getBuyer(entry.buyerNumber);
+    final buyer = DocProvider.of<CompneyDoc>(context).buyers[entry.buyerNumber];
     return ListTile(
       leading: entryTypeToIcon(entry.entryType),
       title: AlternateText(['Give Stock ', '#${buyer.name}']),

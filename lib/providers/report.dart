@@ -105,7 +105,7 @@ class ReportProvider with ChangeNotifier {
           },
         );
       }
-      var rawData = RawObj(await file.readAsString());
+      var rawData = RawObject(await file.readAsString());
       _entries = StateDoc.fromJson(
         rawData.toMap()["stateDoc"].toMap(),
         register: false,

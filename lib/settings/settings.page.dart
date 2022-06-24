@@ -25,6 +25,8 @@ class SettingsPage extends StatelessWidget {
             const Divider(),
             SettingsWidgit.appInfo(),
             const Divider(),
+            const _CompneyLife(),
+            const Divider(),
             SettingsWidgit.signOut<MyAuthUser>(),
           ],
         ),
@@ -57,4 +59,49 @@ class _SelectCompney extends StatelessWidget {
       },
     );
   }
+}
+
+class _CompneyLife extends StatelessWidget {
+  const _CompneyLife({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final compneyID = Provider.of<CompneyInfo>(context).id;
+    final life = Provider.of<CompneyLifeProvider>(context)[compneyID];
+    if (life == null) {
+      return const ListTile(
+        subtitle: Text("Loading..."),
+        title: Text("Expires At"),
+      );
+    }
+    final expDate = life.willExpireAt;
+    if (expDate != null) {
+      return ListTile(
+        title: const Text("Expires At"),
+        trailing: Text(expDate.formateDate(name: true)),
+        subtitle: Text("${durationFromNow(expDate.dateTime)} left"),
+      );
+    }
+    final delDate = life.willBeDeletedAt;
+    if (delDate != null) {
+      return ListTile(
+        title: const Text("Will Be Deleted At"),
+        trailing: Text(delDate.formateDate(name: true)),
+        subtitle: Text(
+          "In ${durationFromNow(delDate.dateTime)} Compney will be deleted if not actived again",
+        ),
+      );
+    }
+
+    return ListTile(
+      title: const Text("Expires At"),
+      trailing: Text(life.everGreen ? "**" : "!?"),
+    );
+  }
+}
+
+String durationFromNow(DateTime dateTime) {
+  final days = dateTime.difference(DateTime.now()).inDays;
+  if (days > 30) return "${days ~/ 30} months";
+  return "$days days";
 }

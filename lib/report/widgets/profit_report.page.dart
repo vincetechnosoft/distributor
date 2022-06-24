@@ -26,8 +26,8 @@ class _ProfitReportPageState extends State<ProfitReportPage> {
   @override
   Widget build(BuildContext context) {
     final compneyDoc = DocProvider.of<CompneyDoc>(context);
-    final getSeller = compneyDoc.getSeller;
-    final getBuyer = compneyDoc.getBuyer;
+    final seller = compneyDoc.seller;
+    final buyers = compneyDoc.buyers;
     final data = getData(widget.entries);
     final totalProfit = data.totalProfit;
     return Scaffold(
@@ -62,7 +62,7 @@ class _ProfitReportPageState extends State<ProfitReportPage> {
             rowBuilder: (entry) {
               if (entry is BoughtEntry) {
                 final a = entry.buyIn.amount;
-                final name = getSeller(entry.sellerNumber).name;
+                final name = seller[entry.sellerNumber].name;
                 return DisplayRow.str(
                   fixedCell:
                       "@${name.length > 10 ? "${name.substring(0, 9)}. " : name} -Bought",
@@ -76,7 +76,7 @@ class _ProfitReportPageState extends State<ProfitReportPage> {
               }
               if (entry is SoldEntry) {
                 final a = entry.sellOut.amount;
-                final name = getBuyer(entry.buyerNumber).name;
+                final name = buyers[entry.buyerNumber].name;
                 return DisplayRow.str(
                   fixedCell:
                       "#${name.length > 10 ? "${name.substring(0, 9)}. " : name} -Sold",
@@ -178,7 +178,7 @@ class _Summery {
         stockTransferEntry.add(entry);
       } else if (entry is WalletChangesEntry) {
         moneyExpensesEntry.add(entry);
-      } else if (entry is BuyInPaymentEntry || entry is SellOutPayment) {
+      } else if (entry is BuyInPaymentEntry || entry is SellOutPaymentEntry) {
         moneyTransferEntry.add(entry);
       }
     }

@@ -23,7 +23,7 @@ class _CreateUserState extends State<CreateUser> {
   @override
   Widget build(BuildContext context) {
     final doc = DocProvider.of<CompneyDoc>(context);
-    final Iterable<UserInfo> users;
+    final UsersInfo users;
     switch (widget.userType) {
       case UserType.owner:
         users = doc.owners;
@@ -40,8 +40,9 @@ class _CreateUserState extends State<CreateUser> {
     }
     if (loading) {
       return AlertDialog(
-        title:
-            loading ? const Text("Creating worker") : const Text("Loading..."),
+        title: loading
+            ? Text("Creating ${widget.userType.name}")
+            : const Text("Loading..."),
         content: ListView(
           shrinkWrap: true,
           children: [
@@ -55,12 +56,12 @@ class _CreateUserState extends State<CreateUser> {
         ),
       );
     }
-    for (var user in users) {
+    for (var user in users.users) {
       namesUsed.add(user.name);
       phoneUsed.add(user.phoneNumber);
     }
     return AlertDialog(
-      title: const Text("Add Worker"),
+      title: Text("Add ${widget.userType.name}"),
       content: ListView(
         shrinkWrap: true,
         children: [

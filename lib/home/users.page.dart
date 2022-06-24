@@ -13,20 +13,20 @@ class CompneyUserInfoPage extends StatelessWidget {
     final Iterable<UserInfo> users;
     switch (userType) {
       case UserType.owner:
-        users = compneyDoc.owners;
+        users = compneyDoc.owners.users;
         break;
       case UserType.worker:
-        users = compneyDoc.workers;
+        users = compneyDoc.workers.users;
         break;
       case UserType.buyer:
-        users = compneyDoc.buyers;
+        users = compneyDoc.buyers.users;
         break;
       case UserType.seller:
-        users = compneyDoc.seller;
+        users = compneyDoc.seller.users;
         break;
     }
     return Scaffold(
-      appBar: AppBar(title: const Text("Worker Info")),
+      appBar: AppBar(title: Text("${userType.name} Info")),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListView.separated(

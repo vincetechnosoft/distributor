@@ -11,14 +11,14 @@ List<Widget> buildWastageEntry({
 }) {
   return [
     const HeaderTile(title: "Inventory (-)"),
-    DisplayTable<ItemChanges>(
+    DisplayTable<ItemQun>(
       fixColumn: "Item Name",
       column: const ["Box", "Pack"],
       values: entry.wastedItems,
       rowBuilder: (e) {
         return DisplayRow.str(
-          fixedCell: productDoc?.getItem(e.id.toString())?.name ??
-              "ProductID: ${e.id}",
+          fixedCell:
+              productDoc?.getItem(e.id.toString()).name ?? "ProductID: ${e.id}",
           cells: [
             e.quntity.toString(),
             e.pack.toString(),

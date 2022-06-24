@@ -92,7 +92,8 @@ class EntryFilter {
       final end = DateTimeString.fromDateTime(range.end);
       res = res.where((entry) {
         final date = entry.belongToDate;
-        return start >= date && date >= end;
+        return start.isOlderThenOrEquleTo(date) &&
+            end.isNewerThenOrEquleTo(date);
       });
     }
 
@@ -110,7 +111,7 @@ class EntryFilter {
           if (entry is SoldEntry) {
             if (entry.buyerNumber == buyer) return true;
           } else if (entry is SellOutPaymentEntry) {
-            if (entry.buyerNumber == buyer) return true;
+            if (entry.sellOut.buyerNumber == buyer) return true;
           } else if (entry is ReturnBoxesEntry) {
             if (entry.buyerNumber == buyer) return true;
           }
@@ -126,7 +127,7 @@ class EntryFilter {
           if (entry is BoughtEntry) {
             if (entry.sellerNumber == seller) return true;
           } else if (entry is BuyInPaymentEntry) {
-            if (entry.sellerNumber == seller) return true;
+            if (entry.buyIn.sellerNumber == seller) return true;
           }
           return false;
         });
@@ -209,7 +210,7 @@ class _WidgitState extends State<_Widgit> {
             value: widget.filter._creator,
             items: [
               const DropdownMenuItem(child: Text("All")),
-              ...compneyDoc.owners.map(
+              ...compneyDoc.owners.users.map(
                 (e) => DropdownMenuItem(
                   value: e.phoneNumber,
                   child: Text(
@@ -218,7 +219,7 @@ class _WidgitState extends State<_Widgit> {
                   ),
                 ),
               ),
-              ...compneyDoc.workers.map(
+              ...compneyDoc.workers.users.map(
                 (e) => DropdownMenuItem(
                   value: e.phoneNumber,
                   child: Text(e.name),
@@ -237,7 +238,7 @@ class _WidgitState extends State<_Widgit> {
             value: widget.filter._buyer,
             items: [
               const DropdownMenuItem(child: Text("All")),
-              ...compneyDoc.buyers.map(
+              ...compneyDoc.buyers.users.map(
                 (e) => DropdownMenuItem(
                   value: e.phoneNumber,
                   child: Text(e.name),
@@ -258,7 +259,7 @@ class _WidgitState extends State<_Widgit> {
             value: widget.filter._seller,
             items: [
               const DropdownMenuItem(child: Text("All")),
-              ...compneyDoc.seller.map(
+              ...compneyDoc.seller.users.map(
                 (e) => DropdownMenuItem(
                   value: e.phoneNumber,
                   child: Text(e.name),

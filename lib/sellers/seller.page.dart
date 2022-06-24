@@ -18,7 +18,7 @@ class SellerPage extends StatelessWidget {
     final user = Provider.of<MyAuthUser>(context);
     final compneyDoc = DocProvider.of<CompneyDoc>(context);
     final stateDoc = DocProvider.of<StateDoc>(context);
-    final sellers = compneyDoc.seller;
+    final sellers = compneyDoc.seller.users;
     final hasOwnerPermission = user.hasOwnerPermission;
     return Scaffold(
       drawer: const MyDrawer(),
@@ -54,8 +54,8 @@ class SellerPage extends StatelessWidget {
           final seller = sellers.elementAt(index);
           return ListTile(
             title: Text(seller.name),
-            trailing: Text(
-                stateDoc.getBuyInDuePayment(seller.phoneNumber).toString()),
+            trailing:
+                Text(stateDoc.buyInDuePayment[seller.phoneNumber].toString()),
             subtitle: Text(
               "${stateDoc.getSellerEntries(seller.phoneNumber).length} related Entries avalable",
             ),

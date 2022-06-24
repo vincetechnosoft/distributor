@@ -24,7 +24,7 @@ class _CreateWastageEntryPageState extends State<CreateWastageEntryPage> {
     final user = Provider.of<MyAuthUser>(context);
     final productDoc = DocProvider.of<ProductDoc>(context);
     final stateDoc = DocProvider.of<StateDoc>(context);
-    final getQuntityOf = stateDoc.getQuntityOf;
+    final inventory = stateDoc.inventory;
     final items = productDoc.items;
     if (!user.hasOwnerPermission) {
       return const ErrorPage(
@@ -41,7 +41,7 @@ class _CreateWastageEntryPageState extends State<CreateWastageEntryPage> {
           if (loading && index-- == 0) return const LinearProgressIndicator();
           final item = items.elementAt(index);
           final controller = wasted[item.id] ??= _ItemChanges(item);
-          final inv = getQuntityOf(item.id.toString());
+          final inv = inventory[item.id.toString()];
           return ListTile(
             title: InputQuntity(controller, loading: loading),
             subtitle: Padding(
@@ -68,7 +68,7 @@ class _CreateWastageEntryPageState extends State<CreateWastageEntryPage> {
                 });
                 final res = await WastageEntry(
                   wastedItems: wasted.entries.map(
-                    (e) => ItemChanges(
+                    (e) => ItemQun(
                       id: e.key,
                       quntity: e.value.intQ,
                       pack: e.value.intP,

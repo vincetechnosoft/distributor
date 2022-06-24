@@ -28,7 +28,7 @@ class _BuyProductState extends State<BuyProduct> {
     final compneyDoc = DocProvider.of<CompneyDoc>(context);
     final productDoc = DocProvider.of<ProductDoc>(context);
     final items = productDoc.items;
-    final seller = compneyDoc.getSeller(widget.sellerNumber);
+    final seller = compneyDoc.seller[widget.sellerNumber];
     return Scaffold(
       appBar: AppBar(title: Text("Buying from ${seller.name}")),
       body: Padding(

@@ -47,6 +47,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BmiApp<MyAuthUser, MainRoute>(
       title: "DISTRIBUTOR's App",
+      compneyLifeProvider: CompneyLifeProvider(compneyType: "distributor"),
       appInfoProvider: AppInfoProvider(
         listenNode: "distributor",
         appVersion: currentAppVersion,

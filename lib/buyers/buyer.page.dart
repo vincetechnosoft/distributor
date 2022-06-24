@@ -18,7 +18,7 @@ class BuyerPage extends StatelessWidget {
     final user = Provider.of<MyAuthUser>(context);
     final compneyDoc = DocProvider.of<CompneyDoc>(context);
     final stateDoc = DocProvider.of<StateDoc>(context);
-    final buyers = compneyDoc.buyers;
+    final buyers = compneyDoc.buyers.users;
     final hasOwnerPermission = user.hasOwnerPermission;
     return Scaffold(
       drawer: const MyDrawer(),
@@ -52,13 +52,14 @@ class BuyerPage extends StatelessWidget {
       body: ListView.separated(
         itemBuilder: (context, index) {
           final buyer = buyers.elementAt(index);
+          final sellOutDue = stateDoc.sellOutDue[buyer.phoneNumber];
           return ListTile(
             title: Text(buyer.name),
             trailing: Text(
-              stateDoc.getSellOutDuePayment(buyer.phoneNumber).toString(),
+              sellOutDue.payment.toString(),
             ),
             subtitle: Text(
-              "${stateDoc.getSellOutDueBoxes(buyer.phoneNumber)} Due Boxes",
+              "${sellOutDue.boxes} Due Boxes",
             ),
             onTap: () {
               if (hasOwnerPermission) {

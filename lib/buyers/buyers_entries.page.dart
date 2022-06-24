@@ -21,8 +21,7 @@ class BuyersEntriesPage extends StatelessWidget {
     final user = Provider.of<MyAuthUser>(context);
     final stateDoc = DocProvider.of<StateDoc>(context);
     final entries = stateDoc.getBuyerEntries(buyerNumber);
-    final dueAmount = stateDoc.getSellOutDuePayment(buyerNumber);
-    final dueBoxes = stateDoc.getSellOutDueBoxes(buyerNumber);
+    final sellOutDue = stateDoc.sellOutDue[buyerNumber];
     final hasWorkerPermission = user.hasWorkerPermission;
     return Scaffold(
       appBar: AppBar(title: Text("${buyerInfo.name} Entries"), actions: [
@@ -83,14 +82,14 @@ class BuyersEntriesPage extends StatelessWidget {
               return CardTile(
                 title: "Payment Due",
                 subtitle: "(left to take)",
-                trailing: dueAmount.toString(),
+                trailing: sellOutDue.payment.toString(),
               );
             }
             if (index-- == 0) {
               return CardTile(
                 title: "Boxes Due",
                 subtitle: "(left to take)",
-                trailing: dueBoxes.toString(),
+                trailing: sellOutDue.boxes.toString(),
               );
             }
             if (index-- == 0) return const HeaderTile(title: "Entries");

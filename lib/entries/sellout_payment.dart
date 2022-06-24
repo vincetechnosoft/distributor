@@ -13,13 +13,14 @@ List<Widget> buildSellOutPaymentEntry({
     ListTile(
       title: const Text("Buyer"),
       trailing: Text(
-        compneyDoc?.getBuyer(entry.buyerNumber).name ?? entry.buyerNumber,
+        compneyDoc?.buyers[entry.sellOut.buyerNumber].name ??
+            entry.sellOut.buyerNumber,
       ),
     ),
     const Divider(height: 30),
     HeaderTile(
       title: "Wallet Changes (+)",
-      trailing: Text(entry.amount.toString()),
+      trailing: Text(entry.sellOut.amount.toString()),
     )
   ];
 }
@@ -35,7 +36,7 @@ class SellOutEntryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final buyer =
-        DocProvider.of<CompneyDoc>(context).getBuyer(entry.buyerNumber);
+        DocProvider.of<CompneyDoc>(context).buyers[entry.sellOut.buyerNumber];
     return ListTile(
       leading: entryTypeToIcon(entry.entryType),
       title: AlternateText(['Take Payment ', '#${buyer.name}']),

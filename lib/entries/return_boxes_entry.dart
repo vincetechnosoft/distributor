@@ -13,7 +13,7 @@ List<Widget> buildReturnBoxesEntry({
     ListTile(
       title: const Text("Buyer"),
       trailing: Text(
-        compneyDoc?.getBuyer(entry.buyerNumber).name ?? entry.buyerNumber,
+        compneyDoc?.buyers[entry.buyerNumber].name ?? entry.buyerNumber,
       ),
     ),
     const Divider(height: 30),
@@ -34,8 +34,7 @@ class ReturnBoxesEntryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final buyer =
-        DocProvider.of<CompneyDoc>(context).getBuyer(entry.buyerNumber);
+    final buyer = DocProvider.of<CompneyDoc>(context).buyers[entry.buyerNumber];
     return ListTile(
       leading: entryTypeToIcon(entry.entryType),
       title: AlternateText(['Take Boxes ', '#${buyer.name}']),

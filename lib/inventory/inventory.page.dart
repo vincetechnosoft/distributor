@@ -20,7 +20,7 @@ class InventoryPage extends StatelessWidget {
     final productDoc = DocProvider.of<ProductDoc>(context);
     final stateDoc = DocProvider.of<StateDoc>(context);
     final items = productDoc.items;
-    final getQuntityOf = stateDoc.getQuntityOf;
+    final inventory = stateDoc.inventory;
     final walletMoney = stateDoc.walletMoney;
     final boxes = stateDoc.boxes;
     final hasOwnerPermission = user.hasOwnerPermission;
@@ -95,7 +95,7 @@ class InventoryPage extends StatelessWidget {
               column: const ["Box", "Rate (-Disc.)", "Amount"],
               values: items,
               rowBuilder: (e) {
-                final inv = getQuntityOf("${e.id}");
+                final inv = inventory["${e.id}"];
                 final itemSold = ItemSold(
                   id: e.id,
                   quntity: inv.quntity.quntity,
@@ -118,7 +118,7 @@ class InventoryPage extends StatelessWidget {
                       "",
                       "",
                       IntMoney(items.map((e) {
-                        final inv = getQuntityOf("${e.id}");
+                        final inv = inventory["${e.id}"];
                         final itemSold = ItemSold(
                           id: e.id,
                           quntity: inv.quntity.quntity,

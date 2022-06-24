@@ -13,14 +13,14 @@ List<Widget> buildBuyInPaymentEntry({
     ListTile(
       title: const Text("Seller"),
       trailing: Text(
-        compneyDoc?.getSeller(entry.sellerNumber).name ??
-            "SellerID: ${entry.sellerNumber}",
+        compneyDoc?.seller[entry.buyIn.sellerNumber].name ??
+            "SellerID: ${entry.buyIn.sellerNumber}",
       ),
     ),
     const Divider(height: 30),
     HeaderTile(
       title: "Wallet Changes (-)",
-      trailing: Text(entry.amount.toString()),
+      trailing: Text(entry.buyIn.amount.toString()),
     )
   ];
 }
@@ -36,7 +36,7 @@ class BuyInEntryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final seller =
-        DocProvider.of<CompneyDoc>(context).getSeller(entry.sellerNumber);
+        DocProvider.of<CompneyDoc>(context).seller[entry.buyIn.sellerNumber];
     return ListTile(
       leading: entryTypeToIcon(entry.entryType),
       title: AlternateText(['Give Payment ', '@${seller.name}']),

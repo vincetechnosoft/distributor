@@ -21,7 +21,7 @@ class SellersEntriesPage extends StatelessWidget {
     final user = Provider.of<MyAuthUser>(context);
     final stateDoc = DocProvider.of<StateDoc>(context);
     final entries = stateDoc.getSellerEntries(sellerNumber);
-    final due = stateDoc.getBuyInDuePayment(sellerNumber);
+    final due = stateDoc.buyInDuePayment[sellerNumber];
     final hasWorkerPermission = user.hasWorkerPermission;
     return Scaffold(
       appBar: AppBar(
