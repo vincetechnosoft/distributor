@@ -35,7 +35,6 @@ class AllEntriesPage extends StatelessWidget {
         itemBuilder: (context, entry) => entryTile(entry),
         useStickyGroupSeparators: true,
         floatingHeader: true,
-        order: GroupedListOrder.ASC,
       ),
     );
   }

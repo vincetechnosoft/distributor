@@ -1,4 +1,5 @@
 import 'package:bmi_b2b_package/bmi_b2b_package.dart';
+import 'package:distributor/report/pdf/selles_pdf.dart';
 
 import 'package:flutter/material.dart';
 
@@ -24,11 +25,27 @@ class _SellesReportPageState extends State<SellesReportPage> {
 
   @override
   Widget build(BuildContext context) {
-    final getProduct = DocProvider.of<ProductDoc>(context).getItem;
-    final buyers = DocProvider.of<CompneyDoc>(context).buyers;
+    final productDoc = DocProvider.of<ProductDoc>(context);
+    final compneyDoc = DocProvider.of<CompneyDoc>(context);
+    final getProduct = productDoc.getItem;
+    final buyers = compneyDoc.buyers;
     final data = getData(widget.entries);
     return Scaffold(
-      appBar: AppBar(title: const Text("Sells Report")),
+      appBar: AppBar(
+        title: const Text("Sells Report"),
+        actions: [
+          IconButton(
+            onPressed: () {
+              sellesPDF(
+                entries: widget.entries,
+                productDoc: productDoc,
+                compneyDoc: compneyDoc,
+              );
+            },
+            icon: const Icon(Icons.picture_as_pdf_rounded),
+          )
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListView(

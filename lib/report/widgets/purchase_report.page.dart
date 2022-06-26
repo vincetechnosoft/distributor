@@ -1,4 +1,5 @@
 import 'package:bmi_b2b_package/bmi_b2b_package.dart';
+import 'package:distributor/report/pdf/purchase_pdf.dart';
 import 'package:flutter/material.dart';
 
 class PurchaseReportPage extends StatefulWidget {
@@ -23,12 +24,28 @@ class _PurchaseReportPageState extends State<PurchaseReportPage> {
 
   @override
   Widget build(BuildContext context) {
-    final getProduct = DocProvider.of<ProductDoc>(context).getItem;
-    final seller = DocProvider.of<CompneyDoc>(context).seller;
+    final productDoc = DocProvider.of<ProductDoc>(context);
+    final compneyDoc = DocProvider.of<CompneyDoc>(context);
+    final getProduct = productDoc.getItem;
+    final seller = compneyDoc.seller;
     final data = getData(widget.entries);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Purchase Report")),
+      appBar: AppBar(
+        title: const Text("Purchase Report"),
+        actions: [
+          IconButton(
+            onPressed: () {
+              purchasePDF(
+                entries: widget.entries,
+                productDoc: productDoc,
+                compneyDoc: compneyDoc,
+              );
+            },
+            icon: const Icon(Icons.picture_as_pdf_rounded),
+          )
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListView(

@@ -77,7 +77,7 @@ class EntryFilter {
   var _aDayOfMonth = DateTimeString.fromDateTime(DateTime.now());
 
   void changeMonth(DateTimeString month) {
-    if (_aDayOfMonth.formateDate(name: false, withDate: false) !=
+    if (_aDayOfMonth.formateDate(name: false, withDate: false) ==
         month.formateDate(name: false, withDate: false)) return;
     _aDayOfMonth = month;
     _dateTimeRange = null;
@@ -170,20 +170,18 @@ class _WidgitState extends State<_Widgit> {
           title: const Text(
             "Select Specific Date",
           ),
-          trailing: TextButton(
-            onPressed: () async {
-              widget.filter._dateTimeRange = await showDateRangePicker(
-                context: context,
-                firstDate: widget.filter._aDayOfMonth.firstDayOfMonth,
-                lastDate: widget.filter._aDayOfMonth.lastDayOfMonth,
-                initialDateRange: widget.filter._dateTimeRange,
-              );
-              setState(() {});
-            },
-            child: Text(
-              widget.filter._dateTimeRange?.toMonthString() ?? "--",
-            ),
+          trailing: Text(
+            widget.filter._dateTimeRange?.toMonthString() ?? "--",
           ),
+          onTap: () async {
+            widget.filter._dateTimeRange = await showDateRangePicker(
+              context: context,
+              firstDate: widget.filter._aDayOfMonth.firstDayOfMonth,
+              lastDate: widget.filter._aDayOfMonth.lastDayOfMonth,
+              initialDateRange: widget.filter._dateTimeRange,
+            );
+            setState(() {});
+          },
         ),
         ListTile(
           title: const Text("Type"),

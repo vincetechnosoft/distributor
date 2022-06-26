@@ -2,6 +2,7 @@ import 'package:bmi_b2b_package/bmi_b2b_package.dart';
 import 'package:distributor/layout/drawer.dart';
 import 'package:distributor/report/report.dart';
 import 'package:distributor/providers/report.dart';
+import 'package:distributor/report/widgets/moneyflow_reort.page.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -73,6 +74,14 @@ class _Widgit extends StatelessWidget {
             ),
             const Divider(),
             _Card(
+              page: MoneyflowReportPage(entries: entries),
+              icon: Icons.wallet_rounded,
+              name: "Money Flow",
+              status: reportProvider.status,
+              subtitle: "Net Money Flow from income, expenses etc.,.",
+              bgColor: Colors.black,
+            ),
+            _Card(
               page: ProfitReportPage(entries: entries),
               icon: Icons.currency_rupee_rounded,
               name: "Profit Table",
@@ -104,8 +113,7 @@ class _Widgit extends StatelessWidget {
               icon: Icons.list_rounded,
               name: "All Entries",
               status: reportProvider.status,
-              subtitle:
-                  "List of All Entries, with required filters to find required entry with ease",
+              subtitle: "List of All Entries",
               bgColor: Colors.purpleAccent,
             ),
           ],

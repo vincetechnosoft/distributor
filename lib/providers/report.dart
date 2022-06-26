@@ -38,7 +38,8 @@ class ReportProvider with ChangeNotifier {
   static ReportProvider? _inUse;
   static ReportProvider? get inUse => _inUse;
 
-  List<Entry> get entries => _entryFilter(_entries ?? []).toList();
+  List<Entry> get entries => _entryFilter(_entries ?? []).toList()
+    ..sort((a, b) => a.belongToDate.compareTo(b.belongToDate));
 
   DateTimeString get selectedMonth => _selectedMonth;
   Status get status => _status;

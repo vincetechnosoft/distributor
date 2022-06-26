@@ -1,5 +1,6 @@
 import 'package:bmi_b2b_package/bmi_b2b_package.dart';
 import 'package:distributor/layout/routes.dart';
+import 'package:distributor/report/pdf/profit_pdf.dart';
 
 import 'package:flutter/material.dart';
 
@@ -13,25 +14,39 @@ class ProfitReportPage extends StatefulWidget {
 
 class _ProfitReportPageState extends State<ProfitReportPage> {
   Iterable<Entry>? _entries;
-  _Summery? _data;
+  ProfitSummery? _data;
   var seeQun = true;
 
-  _Summery getData(Iterable<Entry> entries) {
+  ProfitSummery getData(Iterable<Entry> entries, ProductDoc productDoc) {
     if (entries == _entries) {
-      return _data ??= _Summery.from(entries);
+      return _data ??= ProfitSummery.from(entries, productDoc);
     }
-    return _data = _Summery.from(_entries = entries);
+    return _data = ProfitSummery.from(_entries = entries, productDoc);
   }
 
   @override
   Widget build(BuildContext context) {
     final compneyDoc = DocProvider.of<CompneyDoc>(context);
+    final productDoc = DocProvider.of<ProductDoc>(context);
     final seller = compneyDoc.seller;
     final buyers = compneyDoc.buyers;
-    final data = getData(widget.entries);
-    final totalProfit = data.totalProfit;
+    final data = getData(widget.entries, productDoc);
     return Scaffold(
-      appBar: AppBar(title: const Text("Profit Report")),
+      appBar: AppBar(
+        title: const Text("Profit Report"),
+        actions: [
+          IconButton(
+            onPressed: () {
+              profitPDF(
+                summery: data,
+                productDoc: productDoc,
+                compneyDoc: compneyDoc,
+              );
+            },
+            icon: const Icon(Icons.picture_as_pdf_rounded),
+          )
+        ],
+      ),
       body: ListView(
         children: [
           const HeaderTile(title: "Profit Calculation"),
@@ -44,18 +59,6 @@ class _ProfitReportPageState extends State<ProfitReportPage> {
               "Money",
             ],
             values: data.profitEntry,
-            displaySelectRow: DisplaySelectRow(
-              selected: data.selectedProfitEntries,
-              onSelectChange: (entry, select) {
-                setState(() {
-                  if (select) {
-                    data.selectedProfitEntries.add(entry);
-                  } else {
-                    data.selectedProfitEntries.remove(entry);
-                  }
-                });
-              },
-            ),
             onRowTap: (entry) {
               EntryRoute.goTo(context, entry);
             },
@@ -89,32 +92,16 @@ class _ProfitReportPageState extends State<ProfitReportPage> {
                 );
               }
               if (entry is WalletChangesEntry) {
-                if (entry.walletChangeType == WalletChangeType.salary) {
-                  final a = entry.amount;
-                  return DisplayRow.str(
-                    fixedCell: "Wallet - Salary",
-                    cells: [
-                      entry.belongToDate
-                          .formateDate(name: true, withYear: false),
-                      a.toString(),
-                      "",
-                      a.toString(neg: true),
-                    ],
-                  );
-                } else if (entry.walletChangeType ==
-                    WalletChangeType.expenses) {
-                  final a = entry.amount;
-                  return DisplayRow.str(
-                    fixedCell: "Wallet - Expenses",
-                    cells: [
-                      entry.belongToDate
-                          .formateDate(name: true, withYear: false),
-                      a.toString(),
-                      "",
-                      a.toString(neg: true),
-                    ],
-                  );
-                }
+                final a = entry.amount;
+                return DisplayRow.str(
+                  fixedCell: "Wallet - ${entry.walletChangeType.name}",
+                  cells: [
+                    entry.belongToDate.formateDate(name: true, withYear: false),
+                    a.toString(),
+                    "",
+                    a.toString(neg: true),
+                  ],
+                );
               }
               return DisplayRow.str(
                 fixedCell: "--",
@@ -125,9 +112,9 @@ class _ProfitReportPageState extends State<ProfitReportPage> {
               fixedCell: "Total",
               cells: [
                 "",
-                IntMoney(totalProfit.outgoing).toString(),
-                IntMoney(totalProfit.incoming).toString(),
-                IntMoney(totalProfit.profit).toString(),
+                IntMoney(data.outgoing).toString(),
+                IntMoney(data.incoming).toString(),
+                IntMoney(data.profit).toString(),
               ],
             ),
           ),
@@ -137,51 +124,85 @@ class _ProfitReportPageState extends State<ProfitReportPage> {
   }
 }
 
-class _Total {
+class _Stock {
+  int _q = 0;
+  int _p = 0;
+
+  void add(ItemBought itemBought) {
+    _q += itemBought.quntity.quntity;
+    _p += itemBought.pack.quntity;
+  }
+
+  void remove(ItemSold itemSold) {
+    _q -= itemSold.quntity.quntity;
+    _p -= itemSold.pack.quntity;
+  }
+}
+
+class ProfitSummery {
   int outgoing = 0;
   int incoming = 0;
 
   int get profit => incoming - outgoing;
-}
+  final List<Entry> profitEntry = [];
 
-class _Summery {
-  final List<Entry> moneyTransferEntry = [];
-  final List<WalletChangesEntry> moneyExpensesEntry = [];
-  final List<Entry> stockTransferEntry = [];
-  final Set<Entry> selectedProfitEntries = {};
-
-  List<Entry> get profitEntry => [
-        ...stockTransferEntry,
-        ...moneyExpensesEntry.where((e) =>
-            e.walletChangeType == WalletChangeType.salary ||
-            e.walletChangeType == WalletChangeType.expenses)
-      ];
-
-  _Total get totalProfit {
-    var a = _Total();
-    for (var e in selectedProfitEntries) {
-      if (e is BoughtEntry) a.outgoing += e.buyIn.amount.money;
-      if (e is SoldEntry) a.incoming += e.sellOut.amount.money;
-      if (e is WalletChangesEntry) {
-        if (e.walletChangeType == WalletChangeType.salary ||
-            e.walletChangeType == WalletChangeType.expenses) {
-          a.outgoing += e.amount.money;
+  ProfitSummery.from(Iterable<Entry> entries, ProductDoc productDoc) {
+    final inventory = <int, _Stock>{};
+    for (var entry in entries) {
+      if (entry is BoughtEntry) {
+        outgoing += entry.buyIn.amount.money;
+        profitEntry.add(entry);
+        for (var e in entry.itemBought) {
+          (inventory[e.id] ??= _Stock()).add(e);
+        }
+      } else if (entry is SoldEntry) {
+        incoming += entry.sellOut.amount.money;
+        profitEntry.add(entry);
+        for (var e in entry.itemSold) {
+          (inventory[e.id] ??= _Stock()).remove(e);
+        }
+      } else if (entry is WalletChangesEntry) {
+        if (entry.walletChangeType == WalletChangeType.salary ||
+            entry.walletChangeType == WalletChangeType.expenses) {
+          outgoing += entry.amount.money;
+          profitEntry.add(entry);
         }
       }
     }
-    return a;
-  }
-
-  _Summery.from(Iterable<Entry> entries) {
-    for (var entry in entries) {
-      if (entry is BoughtEntry || entry is SoldEntry) {
-        stockTransferEntry.add(entry);
-      } else if (entry is WalletChangesEntry) {
-        moneyExpensesEntry.add(entry);
-      } else if (entry is BuyInPaymentEntry || entry is SellOutPaymentEntry) {
-        moneyTransferEntry.add(entry);
+    final remainingStocks = <ItemSold>[];
+    final requiredStoks = <ItemBought>[];
+    for (var e in inventory.entries) {
+      final product = productDoc.getItem(e.key.toString());
+      final stock = e.value;
+      final itemSold = ItemSold(
+        id: product.id,
+        quntity: stock._q,
+        pack: stock._p,
+        discountApplyed: product.defaultDiscount,
+        rate: product.rate,
+      );
+      if (itemSold.amount.money < 0) {
+        requiredStoks.add(
+          ItemBought(
+            id: product.id,
+            quntity: -stock._q,
+            pack: -stock._p,
+            rate: product.defaultBoughtRate,
+          ),
+        );
+      } else {
+        remainingStocks.add(itemSold);
       }
     }
-    selectedProfitEntries.addAll(profitEntry);
+    if (requiredStoks.isNotEmpty) {
+      profitEntry.add(
+        BoughtEntry(sellerNumber: "Required Stock", itemBought: requiredStoks),
+      );
+    }
+    if (remainingStocks.isNotEmpty) {
+      profitEntry.add(
+        SoldEntry(buyerNumber: "Remaning Stock", itemSold: remainingStocks),
+      );
+    }
   }
 }
